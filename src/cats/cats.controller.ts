@@ -1,21 +1,17 @@
-import { SuccessInterceptor } from './../commmon/interceptors/success.interceptor';
-import { HttpExceptionFilter } from '../commmon/exceptions/http-exception.filter';
-import { CatsService } from './cats.service';
 import {
+  Body,
   Controller,
-  Delete,
   Get,
-  HttpException,
-  HttpStatus,
-  Param,
-  ParseIntPipe,
-  Patch,
   Post,
-  Put,
   UseFilters,
   UseInterceptors,
 } from '@nestjs/common';
-import { PositiveIntPipe } from 'src/commmon/pipe/positiveInt.pipe';
+import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { HttpExceptionFilter } from '../commmon/exceptions/http-exception.filter';
+import { SuccessInterceptor } from './../commmon/interceptors/success.interceptor';
+import { CatsService } from './cats.service';
+import { ReadOnlyCatDto } from './dto/cat.dto';
+import { CatRequestDto } from './dto/cats.request.dto';
 
 @Controller('cats')
 @UseFilters(HttpExceptionFilter)
@@ -24,34 +20,42 @@ export class CatsController {
   constructor(private readonly CatsService: CatsService) {}
 
   @Get()
-  getAllCats() {
-    throw new HttpException('api is broken', HttpStatus.FORBIDDEN);
-    return 'call cat';
+  getCurrentCat() {
+    return 'current cat';
   }
 
-  @Get(':id')
-  getOneCat(@Param('id', ParseIntPipe, PositiveIntPipe) parma) {
-    console.log(parma);
-    return 'one cat';
-  }
-
+  @ApiResponse({
+    status: 400,
+    description: 'Server Error',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '성공',
+    type: ReadOnlyCatDto,
+  })
+  @ApiOperation({ summary: '회원가입' })
+  @ApiBody({
+    description: 'body example',
+    type: CatRequestDto,
+  })
   @Post()
-  createCat() {
-    return 'create cat';
+  async signUp(@Body() body: CatRequestDto) {
+    console.log(body);
+    return await this.CatsService.signUp(body);
   }
 
-  @Put(':id')
-  updateCat() {
-    return 'update cat';
+  @Post('login')
+  logIn() {
+    return 'login';
   }
 
-  @Patch(':id')
-  updatePartialCat() {
-    return;
+  @Post('logout')
+  logOut() {
+    return 'logout';
   }
 
-  @Delete(':id')
-  deleteCat() {
-    return;
+  @Post('upload/cats')
+  uploadCatImg() {
+    return 'uploadImg';
   }
 }
