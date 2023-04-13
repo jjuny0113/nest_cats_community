@@ -43,7 +43,10 @@ export class Cat extends Document {
   @IsNotEmpty()
   password: string;
 
-  @Prop()
+  @Prop({
+    default:
+      'https://plus.unsplash.com/premium_photo-1677178660405-38e552adf46c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1587&q=80',
+  })
   @IsUrl()
   imgUrl: string;
 
@@ -51,6 +54,7 @@ export class Cat extends Document {
     id: string;
     email: string;
     name: string;
+    imgUrl: string;
   };
 }
 
@@ -61,5 +65,6 @@ CatSchema.virtual('readOnlyData').get(function (this: Cat) {
     id: this.id,
     email: this.email,
     name: this.name,
+    imgUrl: this.imgUrl,
   };
 });
